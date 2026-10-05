@@ -1,0 +1,41 @@
+# secrets
+.env
+.env.*
+!.env.example
+*.pem
+
+# deps / builds
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.next/
+out/
+dist/
+coverage/
+playwright-report/
+test-results/
+.vercel/
+*.tsbuildinfo
+
+# local data
+.local-audio/
+*.sqlite
+*.db
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+.local-*
+.models/
+.claude/
+
+*.egg-info/
+
+# voice listening samples (audio)
+voice-samples/

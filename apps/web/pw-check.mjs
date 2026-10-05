@@ -1,0 +1,16 @@
+import { chromium } from "@playwright/test"
+const browser = await chromium.launch({ args: ["--autoplay-policy=no-user-gesture-required"] })
+const page = await browser.newPage()
+const errors = []
+page.on("console", (m) => { if (m.type() === "error") errors.push(m.text().slice(0, 300)) })
+page.on("pageerror", (e) => errors.push("PAGEERROR " + e.message.slice(0, 300)))
+await page.goto("http://localhost:3000/")
+await page.getByRole("button", { name: "Try a sample" }).click()
+await page.getByRole("button", { name: "Continue" }).click()
+await page.waitForURL(/\/new\//)
+await page.getByRole("button", { name: /Create audio/ }).click()
+await page.waitForURL(/\/listen\//)
+await page.getByRole("button", { name: /Speed/ }).click()
+await page.waitForTimeout(1500)
+console.log(errors.filter(e => !/Clerk|Vercel|DevTools/.test(e)))
+await browser.close()

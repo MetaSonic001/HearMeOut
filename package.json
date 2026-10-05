@@ -1,0 +1,19 @@
+{
+  "name": "hearmeout",
+  "private": true,
+  "description": "HearMeOut: turn any document into audio you can learn from. Monorepo: apps/web (Next.js) and apps/api (FastAPI).",
+  "scripts": {
+    "dev": "bun scripts/dev.ts",
+    "dev:web": "bun run --cwd apps/web dev",
+    "dev:api": "uv run --directory apps/api --no-sync python -m uvicorn app.main:create_app --factory --reload --port 8000",
+    "build:web": "bun run --cwd apps/web build",
+    "test:web": "bun run --cwd apps/web test",
+    "test:api": "uv run --directory apps/api --no-sync python -m pytest -q",
+    "test:e2e": "bun run --cwd apps/web test:e2e",
+    "lint:web": "bun run --cwd apps/web lint",
+    "lint:api": "uv run --directory apps/api --no-sync python -m ruff check app tests",
+    "db:init": "uv run --directory apps/api --no-sync python -m app.db.init_db",
+    "create-admin": "bun scripts/create-admin.ts",
+    "verify": "bun scripts/verify-deploy.ts"
+  }
+}

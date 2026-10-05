@@ -1,0 +1,63 @@
+# Render blueprint for the HearMeOut API (plain Python service, free plan).
+# Create it with: Render dashboard -> New -> Blueprint -> pick this repo.
+# Secrets marked sync:false are entered once in the Render dashboard.
+services:
+  - type: web
+    name: hearmeout-api
+    runtime: python
+    rootDir: apps/api # only changes under apps/api trigger a redeploy
+    buildCommand: bash build.sh # installs the API + OCR (set OCR_ENABLED=false and drop the ocr extra from build.sh to save memory)
+    startCommand: uvicorn app.main:create_app --factory --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips='*' --no-server-header
+    plan: free
+    region: singapore # closest Render region to Supabase ap-south-1 (Mumbai)
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: ENVIRONMENT
+        value: production
+      - key: STORAGE_BACKEND
+        value: supabase
+      - key: SUPABASE_BUCKET
+        value: audio
+      - key: APP_SECRET # signs guest tokens; generated once, keep it stable
+        generateValue: true
+      - key: INTERNAL_API_SECRET # must equal INTERNAL_API_SECRET on Vercel
+        sync: false
+      - key: SITE_URL # e.g. https://hearmeout.app (your Vercel domain)
+        sync: false
+      - key: API_PUBLIC_URL # this service's public URL, e.g. https://hearmeout-api.onrender.com
+        sync: false
+      - key: CORS_ORIGINS # comma-separated, same as SITE_URL (+ www if used)
+        sync: false
+      - key: DATABASE_URL # postgresql+asyncpg://...pooler.supabase.com:6543/postgres
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SECRET_KEY
+        sync: false
+      - key: CLERK_PUBLISHABLE_KEY
+        sync: false
+      - key: CLERK_SECRET_KEY
+        sync: false
+      - key: ADMIN_USER_IDS # optional: Clerk user ids that are always owner
+        sync: false
+      - key: GROQ_API_KEY # optional until you add it; smart modes fall back to extractive summaries
+        sync: false
+      - key: OCR_ENABLED # scanned-PDF reading; needs about 300 MB of RAM while a scan is being read
+        value: true
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-120b
+      - key: DODO_PAYMENTS_API_KEY
+        sync: false
+      - key: DODO_WEBHOOK_SECRET
+        sync: false
+      - key: DODO_ENVIRONMENT # test_mode or live_mode
+        value: test_mode
+      - key: DODO_PRODUCT_PRO_MONTHLY
+        sync: false
+      - key: DODO_PRODUCT_PRO_YEARLY
+        sync: false
+      - key: DODO_PRODUCT_BOOK
+        sync: false
